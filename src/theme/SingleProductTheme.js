@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AppContext from '../context';
 import { Link } from 'react-router-dom';
 import Heading from '../components/atoms/Heading/Heading';
-import FormFroduct from '../components/organisms/FormFroduct/FormFroduct';
+import FormFroduct from '../components/organisms/FormProduct/FormProduct';
 import Button from '../components/atoms/Button/Button';
 
 class SingleProductTheme extends Component {

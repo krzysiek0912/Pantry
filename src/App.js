@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import RootView from './views/RootView';
 import AppContext from './context';
 import SingleProductView from './views/SingleIeProductView';
+import ShopListView from './views/ShopListView';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 const list = [
@@ -67,6 +68,7 @@ class App extends Component {
                             <div className="py-8">
                                 <Switch>
                                     <Route exact path="/" component={RootView} />
+                                    <Route path="/shoplist" component={ShopListView} />
                                     <Route path="/add" component={SingleProductView} />
                                     <Route path="/edit/:id" component={SingleProductView} />
                                     <Route path="*" component={RootView} />

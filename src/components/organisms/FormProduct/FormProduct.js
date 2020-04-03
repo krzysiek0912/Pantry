@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Button from '../../atoms/Button/Button';
 import Select from '../../atoms/Select/Select';
 
-class FormFroduct extends Component {
+class FormProduct extends Component {
     state = {
         id: null,
         productName: '',
@@ -23,7 +23,6 @@ class FormFroduct extends Component {
         this.setState({ productCategory, unit: value });
     };
     handleChangeInput = ({ target }) => {
-        console.log(target.name);
         this.setState({ [target.name]: target.value });
     };
 
@@ -37,7 +36,6 @@ class FormFroduct extends Component {
             minCount,
         };
         this.props.addItem(newItem);
-        console.log('Wysłanie formularza');
     };
 
     render() {
@@ -98,8 +96,8 @@ class FormFroduct extends Component {
                         </label>
                         <input
                             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            id="count"
-                            name="count"
+                            id="minCount"
+                            name="minCount"
                             type="number"
                             value={minCount}
                             onChange={this.handleChangeInput}
@@ -114,4 +112,4 @@ class FormFroduct extends Component {
     }
 }
 
-export default FormFroduct;
+export default FormProduct;

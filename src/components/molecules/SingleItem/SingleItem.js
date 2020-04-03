@@ -7,7 +7,9 @@ class SingleItem extends Component {
         this.props.removeItem(this.props.item.id);
     };
     render() {
-        const { id, productName, count, unit, minCount } = this.props.item;
+        const { item, isShopList } = this.props;
+        const { id, productName, count, unit, minCount } = item;
+        console.log('isshop', isShopList);
         return (
             <tr>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -21,16 +23,18 @@ class SingleItem extends Component {
                     <p className="text-gray-900 whitespace-no-wrap">{`${count}${unit}`}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                    {`${minCount}${unit}`}
+                    {isShopList ? `${minCount - count}${unit}` : `${minCount}${unit}`}
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                    <Link to={`/edit/${id}`}>
-                        <Button>Edytuj</Button>
-                    </Link>
-                    <Button onClick={this.handleRemoveItem} color="red">
-                        Usuń
-                    </Button>
-                </td>
+                {!isShopList && (
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                        <Link to={`/edit/${id}`}>
+                            <Button>Edytuj</Button>
+                        </Link>
+                        <Button onClick={this.handleRemoveItem} color="red">
+                            Usuń
+                        </Button>
+                    </td>
+                )}
             </tr>
         );
     }
