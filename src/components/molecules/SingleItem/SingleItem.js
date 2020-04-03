@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import Button from '../atoms/Button/Button';
+import Button from '../../atoms/Button/Button';
 import { Link } from 'react-router-dom';
 
 class SingleItem extends Component {
+    handleRemoveItem = () => {
+        this.props.removeItem(this.props.item.id);
+    };
     render() {
         const { id, productName, count, unit, minCount } = this.props.item;
         return (
@@ -24,8 +27,7 @@ class SingleItem extends Component {
                     <Link to={`/edit/${id}`}>
                         <Button>Edytuj</Button>
                     </Link>
-                    <button onClick={() => console.log('usuń')}>Usuń</button>
-                    <Button onClick={() => console.log('usuń')} color="red">
+                    <Button onClick={this.handleRemoveItem} color="red">
                         Usuń
                     </Button>
                 </td>

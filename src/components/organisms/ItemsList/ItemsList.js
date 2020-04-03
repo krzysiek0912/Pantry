@@ -1,6 +1,7 @@
 import React from 'react';
-import SingleItem from '../SingleItem/SingleItem';
-const ItemList = ({ items }) => {
+import AppContext from '../../../context';
+import SingleItem from '../../molecules/SingleItem/SingleItem';
+const ItemsList = ({ items }) => {
     return (
         <table className="min-w-full leading-normal">
             <thead>
@@ -20,12 +21,20 @@ const ItemList = ({ items }) => {
                 </tr>
             </thead>
             <tbody>
-                {items.map(item => (
-                    <SingleItem key={item.productName} item={item}></SingleItem>
-                ))}
+                <AppContext.Consumer>
+                    {context => {
+                        return context.items.map(item => (
+                            <SingleItem
+                                key={item.id}
+                                item={item}
+                                removeItem={context.removeItem}
+                            ></SingleItem>
+                        ));
+                    }}
+                </AppContext.Consumer>
             </tbody>
         </table>
     );
 };
 
-export default ItemList;
+export default ItemsList;
