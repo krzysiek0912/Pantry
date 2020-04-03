@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from '../../atoms/Button/Button';
 import Select from '../../atoms/Select/Select';
-
+import { withRouter } from 'react-router';
 class FormProduct extends Component {
     state = {
         id: null,
@@ -59,9 +59,6 @@ class FormProduct extends Component {
                             value={productName}
                             placeholder="np. Mąka"
                         />
-                        {/* <p className="text-red-500 text-xs italic">
-                                Please fill out this field.
-                            </p> */}
                         <Button type="submit">{id ? 'Edytuj' : 'Dodaj'} </Button>
                     </div>
                     <div className="w-full md:w-1/4 px-3">
@@ -112,4 +109,4 @@ class FormProduct extends Component {
     }
 }
 
-export default FormProduct;
+export default withRouter(FormProduct);

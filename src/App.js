@@ -45,9 +45,19 @@ class App extends Component {
         items: list,
     };
     addItem = newItem => {
-        this.setState((prevState, props) => ({
-            items: [...prevState.items, newItem],
-        }));
+        if (newItem.id) {
+            this.setState((prevState, props) => {
+                const newItems = prevState.items.map(item => {
+                    if (item.id === newItem.id) item = newItem;
+                    return item;
+                });
+                return { items: [...newItems] };
+            });
+        } else {
+            this.setState((prevState, props) => ({
+                items: [...prevState.items, newItem],
+            }));
+        }
     };
     removeItem = id => {
         this.setState((prevState, props) => ({
