@@ -25,18 +25,8 @@ class FormProduct extends Component {
     handleChangeInput = ({ target }) => {
         this.setState({ [target.name]: target.value });
     };
-
-    handleSubmit = (e) => {
-        e.preventDefault();
-
-        const count = parseFloat(this.state.count);
-        const minCount = parseFloat(this.state.minCount);
-        const newProduct = {
-            ...this.state,
-            count,
-            minCount,
-        };
-        this.props.addProduct(newProduct);
+    handleShowModal = () => {
+        this.props.toggleModal(this.state.id);
         this.setState({
             id: null,
             productName: '',
@@ -45,6 +35,32 @@ class FormProduct extends Component {
             minCount: 2,
             unit: 'kg',
         });
+    };
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const { count, minCount, id } = this.state;
+        const { addProduct, editProduct } = this.props;
+        const parseCount = parseFloat(count);
+        const parseMinCount = parseFloat(minCount);
+        const newProduct = {
+            ...this.state,
+            count: parseCount,
+            minCount: parseMinCount,
+        };
+
+        if (!id) {
+            addProduct(newProduct);
+            this.setState({
+                id: null,
+                productName: '',
+                productCategory: 'Produkt na wagę',
+                count: 0,
+                minCount: 2,
+                unit: 'kg',
+            });
+        } else {
+            editProduct(newProduct);
+        }
     };
 
     render() {
@@ -69,6 +85,11 @@ class FormProduct extends Component {
                             placeholder="np. Mąka"
                         />
                         <Button type="submit">{id ? 'Zapisz zmiany' : 'Dodaj Produkt'} </Button>
+                        {id ? (
+                            <Button color="red" onClick={this.handleShowModal}>
+                                Usuń{' '}
+                            </Button>
+                        ) : null}
                     </div>
                     <div className="w-full md:w-1/4 px-3">
                         <label

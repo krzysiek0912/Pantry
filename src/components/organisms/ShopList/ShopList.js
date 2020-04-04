@@ -1,7 +1,7 @@
 import React from 'react';
 import AppContext from '../../../context';
 import SingleItem from '../../molecules/SingleItem/SingleItem';
-const ShopList = ({ items }) => {
+const ShopList = () => {
     return (
         <table className="min-w-full leading-normal">
             <thead>
@@ -19,13 +19,13 @@ const ShopList = ({ items }) => {
             </thead>
             <tbody>
                 <AppContext.Consumer>
-                    {context => {
-                        return context.items
+                    {(context) => {
+                        return context.products
                             .filter(({ count, minCount }) => count < minCount)
-                            .map(item => (
+                            .map((product) => (
                                 <SingleItem
-                                    key={item.id}
-                                    item={item}
+                                    key={product.id}
+                                    product={product}
                                     removeItem={context.removeItem}
                                     isShopList
                                 ></SingleItem>

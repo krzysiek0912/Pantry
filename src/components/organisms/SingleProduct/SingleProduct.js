@@ -15,6 +15,8 @@ class SingleProduct extends Component {
                             <FormProduct
                                 product={productToEdit}
                                 addProduct={context.addProduct}
+                                editProduct={context.editProduct}
+                                toggleModal={context.toggleModal}
                             ></FormProduct>
                         </>
                     );

@@ -27,6 +27,7 @@ class App extends Component {
         showModal: false,
         productIdToRemove: null,
         order: 'productName',
+        lastEdit: null,
     };
 
     componentDidMount() {
@@ -48,9 +49,6 @@ class App extends Component {
         }));
     };
 
-    hideModal = () => {
-        this.setState({ showModal: false });
-    };
     addProduct = (newProduct) => {
         const ref = productColection.doc();
         const id = ref.id;
@@ -90,7 +88,25 @@ class App extends Component {
             });
         }
     };
-    editProduct = (editProduct) => {};
+
+    editProduct = (editProduct) => {
+        productColection
+            .where('id', '==', editProduct.id)
+            .get()
+            .then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                    doc.ref.update(editProduct);
+                });
+            });
+        this.setState((prevState, props) => {
+            const products = prevState.products.map((product) => {
+                if (product.id === editProduct.id) product = editProduct;
+                return product;
+            });
+            return { products, lastEdit: Date.now() };
+        });
+    };
+
     removeItem = () => {
         productColection
             .where('id', '==', this.state.productIdToRemove)
@@ -108,11 +124,13 @@ class App extends Component {
         });
         this.toggleModal();
     };
+
     render() {
         const contextElements = {
             ...this.state,
             addProduct: this.addProduct,
             removeItem: this.removeItem,
+            editProduct: this.editProduct,
             toggleModal: this.toggleModal,
         };
         const productToRemove = this.state.products.find((product) => {
