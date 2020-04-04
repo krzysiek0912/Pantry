@@ -1,12 +1,16 @@
 import React from 'react';
 import RootTheme from '../theme/RootTheme';
 import ShopList from '../components/organisms/ShopList/ShopList';
+import Heading from '../components/atoms/Heading/Heading';
 
 const ShopListView = () => {
     return (
-        <RootTheme>
-            <ShopList></ShopList>
-        </RootTheme>
+        <>
+            <Heading>Lista Zakupów</Heading>
+            <RootTheme>
+                <ShopList></ShopList>
+            </RootTheme>
+        </>
     );
 };
 

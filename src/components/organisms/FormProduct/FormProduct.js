@@ -28,8 +28,8 @@ class FormProduct extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        const count = parseFloat(this.state.count, 10);
-        const minCount = parseFloat(this.state.minCount, 10);
+        const count = parseFloat(this.state.count);
+        const minCount = parseFloat(this.state.minCount);
         const newItem = {
             ...this.state,
             count,
@@ -59,7 +59,7 @@ class FormProduct extends Component {
                             value={productName}
                             placeholder="np. Mąka"
                         />
-                        <Button type="submit">{id ? 'Edytuj' : 'Dodaj'} </Button>
+                        <Button type="submit">{id ? 'Zapisz zmiany' : 'Dodaj Produkt'} </Button>
                     </div>
                     <div className="w-full md:w-1/4 px-3">
                         <label

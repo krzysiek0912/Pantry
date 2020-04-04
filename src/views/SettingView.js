@@ -1,14 +1,14 @@
 import React from 'react';
 import RootTheme from '../theme/RootTheme';
-import ItemsList from '../components/organisms/ItemsList/ItemsList';
+import Setting from '../components/organisms/Setting/Setting';
 import Heading from '../components/atoms/Heading/Heading';
 
 const RootView = () => {
     return (
         <>
-            <Heading>Lista Produktów</Heading>
+            <Heading>Ustawienia</Heading>
             <RootTheme>
-                <ItemsList></ItemsList>
+                <Setting />
             </RootTheme>
         </>
     );

@@ -5,6 +5,7 @@ import RootView from './views/RootView';
 import AppContext from './context';
 import SingleProductView from './views/SingleIeProductView';
 import ShopListView from './views/ShopListView';
+import SettingView from './views/SettingView';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 const list = [
@@ -44,10 +45,10 @@ class App extends Component {
     state = {
         items: list,
     };
-    addItem = newItem => {
+    addItem = (newItem) => {
         if (newItem.id) {
             this.setState((prevState, props) => {
-                const newItems = prevState.items.map(item => {
+                const newItems = prevState.items.map((item) => {
                     if (item.id === newItem.id) item = newItem;
                     return item;
                 });
@@ -59,9 +60,9 @@ class App extends Component {
             }));
         }
     };
-    removeItem = id => {
+    removeItem = (id) => {
         this.setState((prevState, props) => ({
-            items: prevState.items.filter(item => item.id !== id),
+            items: prevState.items.filter((item) => item.id !== id),
         }));
     };
     render() {
@@ -81,6 +82,7 @@ class App extends Component {
                                     <Route path="/shoplist" component={ShopListView} />
                                     <Route path="/add" component={SingleProductView} />
                                     <Route path="/edit/:id" component={SingleProductView} />
+                                    <Route path="/setting" component={SettingView} />
                                     <Route path="*" component={RootView} />
                                 </Switch>
                             </div>
