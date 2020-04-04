@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import Button from '../../atoms/Button/Button';
 import Select from '../../atoms/Select/Select';
+import firebase from '../../../firebase';
 import { withRouter } from 'react-router';
+
+const db = firebase.firestore();
 class FormProduct extends Component {
     state = {
         id: null,
@@ -10,12 +13,24 @@ class FormProduct extends Component {
         count: 0,
         minCount: 2,
         unit: 'kg',
+        isUpdate: false,
     };
-
+    timeMessage = null;
     componentDidMount() {
+        db.collection('products')
+            .where('id', '==', this.props.match.params.id)
+            .get()
+            .then((querySnapshot) => {
+                const data = querySnapshot.docs.map((doc) => doc.data());
+                const product = data[0];
+                this.setState((prevState, props) => ({
+                    ...product,
+                }));
+            });
         const { product } = this.props;
         if (product) this.setState({ ...product });
     }
+
     handleChangeSelect = ({ target }) => {
         const { value, options } = target;
         const index = options.selectedIndex;
@@ -60,11 +75,23 @@ class FormProduct extends Component {
             });
         } else {
             editProduct(newProduct);
+            this.setState(
+                {
+                    isUpdate: true,
+                },
+                () => {
+                    setTimeout(() => {
+                        this.setState((prevState) => ({
+                            isUpdate: false,
+                        }));
+                    }, 2000);
+                },
+            );
         }
     };
 
     render() {
-        const { id, productName, count, minCount, unit } = this.state;
+        const { id, productName, count, minCount, unit, isUpdate } = this.state;
         return (
             <form className="w-full" onSubmit={this.handleSubmit}>
                 <div className="flex flex-wrap -mx-3 mb-12">
@@ -85,11 +112,17 @@ class FormProduct extends Component {
                             placeholder="np. Mąka"
                         />
                         <Button type="submit">{id ? 'Zapisz zmiany' : 'Dodaj Produkt'} </Button>
+
                         {id ? (
                             <Button color="red" onClick={this.handleShowModal}>
                                 Usuń{' '}
                             </Button>
                         ) : null}
+                        {isUpdate && (
+                            <p className="text-green-600 text-xs italic">
+                                Produkt został zaktualizowany
+                            </p>
+                        )}
                     </div>
                     <div className="w-full md:w-1/4 px-3">
                         <label
@@ -129,9 +162,6 @@ class FormProduct extends Component {
                             value={minCount}
                             onChange={this.handleChangeInput}
                         />
-                        {/* <p className="text-gray-600 text-xs italic">
-                                Some tips - as long as needed
-                            </p> */}
                     </div>
                 </div>
             </form>
