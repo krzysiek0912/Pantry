@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Button from '../../atoms/Button/Button';
 import { Link } from 'react-router-dom';
-
 class SingleItem extends Component {
-    handleRemoveItem = () => {
-        this.props.removeItem(this.props.item.id);
+    handleShowModal = () => {
+        this.props.toggleModal(this.props.item.id);
+    };
+    state = {
+        show: true,
     };
     render() {
         const { item, isShopList } = this.props;
@@ -29,7 +31,7 @@ class SingleItem extends Component {
                         <Link to={`/edit/${id}`}>
                             <Button>Edytuj</Button>
                         </Link>
-                        <Button onClick={this.handleRemoveItem} color="red">
+                        <Button onClick={this.handleShowModal} color="red">
                             Usuń
                         </Button>
                     </td>

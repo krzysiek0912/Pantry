@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import RootView from './views/RootView';
 import AppContext from './context';
 import SingleProductView from './views/SingleIeProductView';
 import ShopListView from './views/ShopListView';
 import SettingView from './views/SettingView';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Modal from './components/molecules/Modal/Modal';
+import Button from './components/atoms/Button/Button';
 
 const list = [
     {
@@ -44,6 +46,18 @@ const StyledWrapper = styled.div`
 class App extends Component {
     state = {
         items: list,
+        showModal: false,
+        productIdToRemove: null,
+    };
+    toggleModal = (id) => {
+        this.setState((prevState, props) => ({
+            showModal: !prevState.showModal,
+            productIdToRemove: id,
+        }));
+    };
+
+    hideModal = () => {
+        this.setState({ showModal: false });
     };
     addItem = (newItem) => {
         if (newItem.id) {
@@ -61,16 +75,24 @@ class App extends Component {
         }
     };
     removeItem = (id) => {
-        this.setState((prevState, props) => ({
-            items: prevState.items.filter((item) => item.id !== id),
-        }));
+        this.setState(({ items, productIdToRemove }) => {
+            return {
+                items: items.filter((item) => item.id !== productIdToRemove),
+            };
+        });
+        this.toggleModal();
     };
     render() {
         const contextElements = {
             ...this.state,
             addItem: this.addItem,
             removeItem: this.removeItem,
+            toggleModal: this.toggleModal,
         };
+        const itemToRemove = this.state.items.find((item) => {
+            console.log('item', item, this.state.productIdToRemove);
+            return item.id === this.state.productIdToRemove;
+        });
         return (
             <BrowserRouter>
                 <AppContext.Provider value={contextElements}>
@@ -87,6 +109,16 @@ class App extends Component {
                                 </Switch>
                             </div>
                         </div>
+                        <Modal showModal={this.state.showModal}>
+                            Potwierdź usunięcie {itemToRemove?.productName} w kategorii{' '}
+                            {itemToRemove?.productCategory}
+                            <div>
+                                <Button color="red" onClick={this.removeItem}>
+                                    Usuń
+                                </Button>
+                                <Button onClick={this.hideModal}>Anuluj</Button>
+                            </div>
+                        </Modal>
                     </StyledWrapper>
                 </AppContext.Provider>
             </BrowserRouter>

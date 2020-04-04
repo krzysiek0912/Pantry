@@ -22,12 +22,12 @@ const ItemsList = ({ items }) => {
             </thead>
             <tbody>
                 <AppContext.Consumer>
-                    {context => {
-                        return context.items.map(item => (
+                    {(context) => {
+                        return context.items.map((item) => (
                             <SingleItem
                                 key={item.id}
                                 item={item}
-                                removeItem={context.removeItem}
+                                toggleModal={context.toggleModal}
                             ></SingleItem>
                         ));
                     }}
