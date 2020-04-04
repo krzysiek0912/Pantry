@@ -17,18 +17,18 @@ class FormProduct extends Component {
     };
     timeMessage = null;
     componentDidMount() {
-        db.collection('products')
-            .where('id', '==', this.props.match.params.id)
-            .get()
-            .then((querySnapshot) => {
-                const data = querySnapshot.docs.map((doc) => doc.data());
-                const product = data[0];
-                this.setState((prevState, props) => ({
-                    ...product,
-                }));
-            });
-        const { product } = this.props;
-        if (product) this.setState({ ...product });
+        const id = this.props.match.params.id;
+        if (id)
+            db.collection('products')
+                .where('id', '==', this.props.match.params.id)
+                .get()
+                .then((querySnapshot) => {
+                    const data = querySnapshot.docs.map((doc) => doc.data());
+                    const product = data[0];
+                    this.setState((prevState, props) => ({
+                        ...product,
+                    }));
+                });
     }
 
     handleChangeSelect = ({ target }) => {
