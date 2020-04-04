@@ -14,6 +14,7 @@ class FormProduct extends Component {
         minCount: 2,
         unit: 'kg',
         isUpdate: false,
+        isError: false,
     };
     timeMessage = null;
     componentDidMount() {
@@ -38,7 +39,7 @@ class FormProduct extends Component {
         this.setState({ productCategory, unit: value });
     };
     handleChangeInput = ({ target }) => {
-        this.setState({ [target.name]: target.value });
+        this.setState({ [target.name]: target.value, error: false });
     };
     handleShowModal = () => {
         this.props.toggleModal(this.state.id);
@@ -53,7 +54,14 @@ class FormProduct extends Component {
     };
     handleSubmit = (e) => {
         e.preventDefault();
-        const { count, minCount, id } = this.state;
+
+        const { count, minCount, id, productName } = this.state;
+        if (productName === '') {
+            this.setState({
+                isError: true,
+            });
+            return;
+        }
         const { addProduct, editProduct } = this.props;
         const parseCount = parseFloat(count);
         const parseMinCount = parseFloat(minCount);
@@ -91,7 +99,7 @@ class FormProduct extends Component {
     };
 
     render() {
-        const { id, productName, count, minCount, unit, isUpdate } = this.state;
+        const { id, productName, count, minCount, unit, isUpdate, isError } = this.state;
         return (
             <form className="w-full" onSubmit={this.handleSubmit}>
                 <div className="flex flex-wrap -mx-3 mb-12">
@@ -101,6 +109,11 @@ class FormProduct extends Component {
                             htmlFor="productName"
                         >
                             Nazwa Produktu
+                            {isError && (
+                                <small className="text-red-600 text-xs italic">
+                                    {'    '}Wpisz nazwę produkt
+                                </small>
+                            )}
                         </label>
                         <input
                             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
