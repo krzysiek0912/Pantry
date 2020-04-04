@@ -1,61 +1,57 @@
 import React, { Component } from 'react';
 import Button from '../../atoms/Button/Button';
 import Select from '../../atoms/Select/Select';
-import firebase from '../../../firebase';
+import { getOneProductRequest } from '../../../firebase';
 import { withRouter } from 'react-router';
-
-const db = firebase.firestore();
 class FormProduct extends Component {
     state = {
-        id: null,
-        productName: '',
-        productCategory: 'Produkt na wagę',
-        count: 0,
-        minCount: 2,
-        unit: 'kg',
-        isUpdate: false,
-        isError: false,
-    };
-    timeMessage = null;
-    componentDidMount() {
-        const id = this.props.match.params.id;
-        if (id)
-            db.collection('products')
-                .where('id', '==', this.props.match.params.id)
-                .get()
-                .then((querySnapshot) => {
-                    const data = querySnapshot.docs.map((doc) => doc.data());
-                    const product = data[0];
-                    this.setState((prevState, props) => ({
-                        ...product,
-                    }));
-                });
-    }
-
-    handleChangeSelect = ({ target }) => {
-        const { value, options } = target;
-        const index = options.selectedIndex;
-        const productCategory = options[index].text;
-        this.setState({ productCategory, unit: value });
-    };
-    handleChangeInput = ({ target }) => {
-        this.setState({ [target.name]: target.value, error: false });
-    };
-    handleShowModal = () => {
-        this.props.toggleModal(this.state.id);
-        this.setState({
+        product: {
             id: null,
             productName: '',
             productCategory: 'Produkt na wagę',
             count: 0,
             minCount: 2,
             unit: 'kg',
+        },
+        isUpdate: false,
+        isError: false,
+    };
+
+    componentDidMount() {
+        const id = this.props.match.params.id;
+        if (id)
+            getOneProductRequest(id, (product) => {
+                this.setState((prevState, props) => ({
+                    product: { ...product },
+                }));
+            });
+    }
+
+    handleChangeSelect = ({ target }) => {
+        const { value, options } = target;
+        const index = options.selectedIndex;
+        const productCategory = options[index].text;
+        this.setState({ product: { productCategory, unit: value } });
+    };
+    handleChangeInput = ({ target }) => {
+        this.setState((prevState) => ({
+            product: { ...prevState.product, [target.name]: target.value },
+            isError: false,
+        }));
+    };
+    handleShowModal = () => {
+        this.props.toggleModal(this.state.product.id);
+        this.setState({
+            product: {
+                id: null,
+                productName: '',
+            },
         });
     };
     handleSubmit = (e) => {
         e.preventDefault();
-
-        const { count, minCount, id, productName } = this.state;
+        console.log('state', this.state.product);
+        const { count, minCount, id, productName } = this.state.product;
         if (productName === '') {
             this.setState({
                 isError: true,
@@ -66,20 +62,17 @@ class FormProduct extends Component {
         const parseCount = parseFloat(count);
         const parseMinCount = parseFloat(minCount);
         const newProduct = {
-            ...this.state,
+            ...this.state.product,
             count: parseCount,
             minCount: parseMinCount,
         };
-
         if (!id) {
             addProduct(newProduct);
             this.setState({
-                id: null,
-                productName: '',
-                productCategory: 'Produkt na wagę',
-                count: 0,
-                minCount: 2,
-                unit: 'kg',
+                product: {
+                    id: null,
+                    productName: '',
+                },
             });
         } else {
             editProduct(newProduct);
@@ -99,7 +92,8 @@ class FormProduct extends Component {
     };
 
     render() {
-        const { id, productName, count, minCount, unit, isUpdate, isError } = this.state;
+        const { product, isUpdate, isError } = this.state;
+        const { id, productName, count, minCount, unit } = product;
         return (
             <form className="w-full" onSubmit={this.handleSubmit}>
                 <div className="flex flex-wrap -mx-3 mb-12">
@@ -116,7 +110,9 @@ class FormProduct extends Component {
                             )}
                         </label>
                         <input
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                            className={`appearance-none block w-full bg-gray-200 text-gray-700 border ${
+                                isError && 'border-red-500'
+                            } rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white`}
                             id="productName"
                             name="productName"
                             type="text"
