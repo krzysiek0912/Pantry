@@ -3,7 +3,7 @@ import Button from '../../atoms/Button/Button';
 import { Link } from 'react-router-dom';
 class SingleItem extends Component {
     handleShowModal = () => {
-        this.props.toggleModal(this.props.item.id);
+        this.props.toggleModal(this.props.product.id);
     };
     state = {
         show: true,

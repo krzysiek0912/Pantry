@@ -10,9 +10,9 @@ import ShopListView from './views/ShopListView';
 import SettingView from './views/SettingView';
 import Modal from './components/molecules/Modal/Modal';
 import Button from './components/atoms/Button/Button';
-import uid from 'uid';
 
 const db = firebase.firestore();
+const productColection = db.collection('products');
 
 const StyledWrapper = styled.div`
     display: flex;
@@ -26,9 +26,12 @@ class App extends Component {
         products: [],
         showModal: false,
         productIdToRemove: null,
+        order: 'productName',
     };
+
     componentDidMount() {
-        db.collection('products')
+        productColection
+            .orderBy(this.state.order)
             .get()
             .then((querySnapshot) => {
                 const data = querySnapshot.docs.map((doc) => doc.data());
@@ -37,6 +40,7 @@ class App extends Component {
                 }));
             });
     }
+
     toggleModal = (id) => {
         this.setState((prevState, props) => ({
             showModal: !prevState.showModal,
@@ -48,40 +52,55 @@ class App extends Component {
         this.setState({ showModal: false });
     };
     addProduct = (newProduct) => {
-        const db = firebase.firestore();
-        db.settings({
-            timestampsInSnapshots: true,
-        });
-        const ref = db.collection('products').doc();
+        const ref = productColection.doc();
         const id = ref.id;
-        // ref.set({ ...newItem, id }).then(function (docRef) {
-        //     console.log('Document written with ID: ', docRef);
-        // });
-        const productsRef = db
-            .collection('products')
-            .add({
+
+        if (!newProduct.id) {
+            productColection.add({
                 ...newProduct,
                 id,
-            })
-            .then(function (docRef) {
-                console.log('Document written with ID: ', docRef.id);
             });
 
-        // if (newItem.id) {
-        //     this.setState((prevState, props) => {
-        //         const newItems = prevState.items.map((item) => {
-        //             if (item.id === newItem.id) item = newItem;
-        //             return item;
-        //         });
-        //         return { items: [...newItems] };
-        //     });
-        // } else {
-        //     this.setState((prevState, props) => ({
-        //         items: [...prevState.items, newItem],
-        //     }));
-        // }
+            this.setState((prevState, props) => {
+                const newProductsArray = [
+                    ...prevState.products,
+                    {
+                        ...newProduct,
+                        id,
+                    },
+                ];
+                // FIXME: Sortowanie
+                // const property = this.state.order;
+                // const productsSort = newProductsArray.sort(function (a, b, property) {
+                //     var result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+                //     return (a, b) => (a.productName > b.productName ? 1 : -1);
+                // });
+                // console.log('sorting products', productsSort);
+                return {
+                    products: newProductsArray,
+                };
+            });
+        } else {
+            this.setState((prevState, props) => {
+                const products = prevState.products.map((product) => {
+                    if (product.id === newProduct.id) product = newProduct;
+                    return product;
+                });
+                return products;
+            });
+        }
     };
-    removeItem = (id) => {
+    editProduct = (editProduct) => {};
+    removeItem = () => {
+        productColection
+            .where('id', '==', this.state.productIdToRemove)
+            .get()
+            .then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                    doc.ref.delete();
+                });
+            });
+
         this.setState(({ products, productIdToRemove }) => {
             return {
                 products: products.filter((product) => product.id !== productIdToRemove),

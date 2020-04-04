@@ -2,15 +2,12 @@ import React, { Component } from 'react';
 import AppContext from '../../../context';
 import FormProduct from '../FormProduct/FormProduct';
 import { withRouter } from 'react-router';
-
 class SingleProduct extends Component {
     render() {
         return (
             <AppContext.Consumer>
                 {(context) => {
                     const idParams = this.props.match.params.id;
-                    console.log('context', context);
-                    console.log();
                     const productToEdit = context.products.find(({ id }) => idParams === id);
 
                     return (
