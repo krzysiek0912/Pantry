@@ -4,38 +4,16 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import RootView from './views/RootView';
 import AppContext from './context';
+import firebase from './firebase';
 import SingleProductView from './views/SingleIeProductView';
 import ShopListView from './views/ShopListView';
 import SettingView from './views/SettingView';
 import Modal from './components/molecules/Modal/Modal';
 import Button from './components/atoms/Button/Button';
+import uid from 'uid';
 
-const list = [
-    {
-        id: 1,
-        productName: 'Mąka',
-        productCategory: 'Produkty suche',
-        count: 1,
-        minCount: 2,
-        unit: 'kg',
-    },
-    {
-        id: 2,
-        productName: 'Ryż',
-        productCategory: 'Produkty suche',
-        count: 2,
-        minCount: 2,
-        unit: 'kg',
-    },
-    {
-        id: 3,
-        productName: 'Woda gazowana',
-        productCategory: 'Napoje',
-        count: 5,
-        minCount: 2,
-        unit: 'l',
-    },
-];
+const db = firebase.firestore();
+
 const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -45,10 +23,20 @@ const StyledWrapper = styled.div`
 `;
 class App extends Component {
     state = {
-        items: list,
+        products: [],
         showModal: false,
         productIdToRemove: null,
     };
+    componentDidMount() {
+        db.collection('products')
+            .get()
+            .then((querySnapshot) => {
+                const data = querySnapshot.docs.map((doc) => doc.data());
+                this.setState((prevState, props) => ({
+                    products: data,
+                }));
+            });
+    }
     toggleModal = (id) => {
         this.setState((prevState, props) => ({
             showModal: !prevState.showModal,
@@ -59,25 +47,44 @@ class App extends Component {
     hideModal = () => {
         this.setState({ showModal: false });
     };
-    addItem = (newItem) => {
-        if (newItem.id) {
-            this.setState((prevState, props) => {
-                const newItems = prevState.items.map((item) => {
-                    if (item.id === newItem.id) item = newItem;
-                    return item;
-                });
-                return { items: [...newItems] };
+    addProduct = (newProduct) => {
+        const db = firebase.firestore();
+        db.settings({
+            timestampsInSnapshots: true,
+        });
+        const ref = db.collection('products').doc();
+        const id = ref.id;
+        // ref.set({ ...newItem, id }).then(function (docRef) {
+        //     console.log('Document written with ID: ', docRef);
+        // });
+        const productsRef = db
+            .collection('products')
+            .add({
+                ...newProduct,
+                id,
+            })
+            .then(function (docRef) {
+                console.log('Document written with ID: ', docRef.id);
             });
-        } else {
-            this.setState((prevState, props) => ({
-                items: [...prevState.items, newItem],
-            }));
-        }
+
+        // if (newItem.id) {
+        //     this.setState((prevState, props) => {
+        //         const newItems = prevState.items.map((item) => {
+        //             if (item.id === newItem.id) item = newItem;
+        //             return item;
+        //         });
+        //         return { items: [...newItems] };
+        //     });
+        // } else {
+        //     this.setState((prevState, props) => ({
+        //         items: [...prevState.items, newItem],
+        //     }));
+        // }
     };
     removeItem = (id) => {
-        this.setState(({ items, productIdToRemove }) => {
+        this.setState(({ products, productIdToRemove }) => {
             return {
-                items: items.filter((item) => item.id !== productIdToRemove),
+                products: products.filter((product) => product.id !== productIdToRemove),
             };
         });
         this.toggleModal();
@@ -85,13 +92,12 @@ class App extends Component {
     render() {
         const contextElements = {
             ...this.state,
-            addItem: this.addItem,
+            addProduct: this.addProduct,
             removeItem: this.removeItem,
             toggleModal: this.toggleModal,
         };
-        const itemToRemove = this.state.items.find((item) => {
-            console.log('item', item, this.state.productIdToRemove);
-            return item.id === this.state.productIdToRemove;
+        const productToRemove = this.state.products.find((product) => {
+            return product.id === this.state.productIdToRemove;
         });
         return (
             <BrowserRouter>
@@ -110,8 +116,8 @@ class App extends Component {
                             </div>
                         </div>
                         <Modal showModal={this.state.showModal}>
-                            Potwierdź usunięcie {itemToRemove?.productName} w kategorii{' '}
-                            {itemToRemove?.productCategory}
+                            Potwierdź usunięcie {productToRemove?.productName} w kategorii{' '}
+                            {productToRemove?.productCategory}
                             <div>
                                 <Button color="red" onClick={this.removeItem}>
                                     Usuń

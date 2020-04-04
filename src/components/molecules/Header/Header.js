@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import Button from '../../atoms/Button/Button';
 
 const Header = ({ match }) => {
-    console.log(match.path);
     return (
         <>
             {match.path !== '/' && (

@@ -26,16 +26,25 @@ class FormProduct extends Component {
         this.setState({ [target.name]: target.value });
     };
 
-    handleSubmit = e => {
+    handleSubmit = (e) => {
         e.preventDefault();
+
         const count = parseFloat(this.state.count);
         const minCount = parseFloat(this.state.minCount);
-        const newItem = {
+        const newProduct = {
             ...this.state,
             count,
             minCount,
         };
-        this.props.addItem(newItem);
+        this.props.addProduct(newProduct);
+        this.setState({
+            id: null,
+            productName: '',
+            productCategory: 'Produkt na wagę',
+            count: 0,
+            minCount: 2,
+            unit: 'kg',
+        });
     };
 
     render() {

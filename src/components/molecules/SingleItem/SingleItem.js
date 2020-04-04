@@ -9,8 +9,8 @@ class SingleItem extends Component {
         show: true,
     };
     render() {
-        const { item, isShopList } = this.props;
-        const { id, productName, count, unit, minCount } = item;
+        const { product, isShopList } = this.props;
+        const { id, productName, count, unit, minCount } = product;
         return (
             <tr>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">

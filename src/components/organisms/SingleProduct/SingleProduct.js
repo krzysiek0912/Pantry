@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import AppContext from '../../../context';
-import FormFroduct from '../FormProduct/FormProduct';
+import FormProduct from '../FormProduct/FormProduct';
 import { withRouter } from 'react-router';
 
 class SingleProduct extends Component {
@@ -8,17 +8,17 @@ class SingleProduct extends Component {
         return (
             <AppContext.Consumer>
                 {(context) => {
-                    const idParams = parseFloat(this.props.match.params.id);
-                    const productToEdit = context.items.find(
-                        ({ id }) => idParams === parseFloat(id),
-                    );
+                    const idParams = this.props.match.params.id;
+                    console.log('context', context);
+                    console.log();
+                    const productToEdit = context.products.find(({ id }) => idParams === id);
 
                     return (
                         <>
-                            <FormFroduct
+                            <FormProduct
                                 product={productToEdit}
-                                addItem={context.addItem}
-                            ></FormFroduct>
+                                addProduct={context.addProduct}
+                            ></FormProduct>
                         </>
                     );
                 }}

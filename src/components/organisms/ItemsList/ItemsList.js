@@ -23,10 +23,10 @@ const ItemsList = ({ items }) => {
             <tbody>
                 <AppContext.Consumer>
                     {(context) => {
-                        return context.items.map((item) => (
+                        return context.products.map((product) => (
                             <SingleItem
-                                key={item.id}
-                                item={item}
+                                key={product.id}
+                                product={product}
                                 toggleModal={context.toggleModal}
                             ></SingleItem>
                         ));
