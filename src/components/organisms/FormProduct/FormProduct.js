@@ -31,7 +31,9 @@ class FormProduct extends Component {
         const { value, options } = target;
         const index = options.selectedIndex;
         const productCategory = options[index].text;
-        this.setState({ product: { productCategory, unit: value } });
+        this.setState((prevState) => ({
+            product: { ...prevState.product, productCategory, unit: value },
+        }));
     };
     handleChangeInput = ({ target }) => {
         this.setState((prevState) => ({
@@ -45,6 +47,10 @@ class FormProduct extends Component {
             product: {
                 id: null,
                 productName: '',
+                productCategory: 'Produkt na wagę',
+                count: 0,
+                minCount: 2,
+                unit: 'kg',
             },
         });
     };
@@ -72,6 +78,10 @@ class FormProduct extends Component {
                 product: {
                     id: null,
                     productName: '',
+                    productCategory: 'Produkt na wagę',
+                    count: 0,
+                    minCount: 2,
+                    unit: 'kg',
                 },
             });
         } else {

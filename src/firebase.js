@@ -15,7 +15,7 @@ const db = firebase.firestore();
 const productColection = db.collection('products');
 const settingsColection = db.collection('settings');
 
-export const getAllProducts = (order, callback) => {
+export const getAllProducts = (order, callback = () => {}) => {
     productColection
         .orderBy(order)
         .get()
@@ -24,7 +24,7 @@ export const getAllProducts = (order, callback) => {
             callback(data);
         });
 };
-export const getOneProductRequest = (id, callback) => {
+export const getOneProductRequest = (id, callback = () => {}) => {
     productColection
         .where('id', '==', id)
         .get()
@@ -34,7 +34,7 @@ export const getOneProductRequest = (id, callback) => {
             callback(product);
         });
 };
-export const getOneSettingRequest = (settingName, callback) => {
+export const getOneSettingRequest = (settingName, callback = () => {}) => {
     settingsColection
         .where('name', '==', settingName)
         .get()
@@ -45,7 +45,7 @@ export const getOneSettingRequest = (settingName, callback) => {
         });
 };
 
-export const addNewProductRequest = (newProduct, callback) => {
+export const addNewProductRequest = (newProduct, callback = () => {}) => {
     const ref = productColection.doc();
     const id = ref.id;
     productColection
@@ -56,7 +56,7 @@ export const addNewProductRequest = (newProduct, callback) => {
         .then(callback(id));
 };
 
-export const editProductRequest = (editProduct, callback) => {
+export const editProductRequest = (editProduct, callback = () => {}) => {
     productColection
         .where('id', '==', editProduct.id)
         .get()
@@ -69,7 +69,7 @@ export const editProductRequest = (editProduct, callback) => {
             callback();
         });
 };
-export const editSettingRequest = (settingName, newValue, callback) => {
+export const editSettingRequest = (settingName, newValue, callback = () => {}) => {
     settingsColection
         .where('name', '==', settingName)
         .get()
@@ -83,7 +83,7 @@ export const editSettingRequest = (settingName, newValue, callback) => {
         });
 };
 
-export const deleteProductRequest = (deletedProductId, callback) => {
+export const deleteProductRequest = (deletedProductId, callback = () => {}) => {
     productColection
         .where('id', '==', deletedProductId)
         .get()
