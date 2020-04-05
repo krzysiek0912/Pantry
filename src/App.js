@@ -11,6 +11,7 @@ import {
     deleteProductRequest,
     getOneSettingRequest,
     editSettingRequest,
+    getAllSettingRequest,
 } from './firebase';
 import EditProductView from './views/EditProductView';
 import NewProductView from './views/NewProductView';
@@ -32,10 +33,15 @@ class App extends Component {
         products: [],
         showModal: false,
         order: 'productName',
-        lastUpdate: null,
-        timeToUpdate: 10000,
+
         isUpdated: true,
         showAlert: true,
+        settings: {
+            lastUpdate: null,
+            timeToUpdate: 10000,
+            darkTheme: true,
+        },
+        isLoaded: false,
     };
 
     componentDidMount() {
@@ -44,13 +50,22 @@ class App extends Component {
                 products: data,
             }));
         });
-        getOneSettingRequest('lastUpdate', (vale) => {
-            this.setState({
-                lastUpdate: vale.toMillis(),
-            });
+        getAllSettingRequest((newSettings) => {
+            this.setState((prevState) => ({
+                settings: { ...newSettings, lastUpdate: newSettings.lastUpdate.toMillis() },
+                isLoaded: true,
+            }));
         });
     }
-
+    updateSettings = (newSettings) => {
+        this.setState((prevState) => ({
+            settings: {
+                ...prevState.settings,
+                ...newSettings,
+            },
+        }));
+        console.log('newSettings', newSettings);
+    };
     hideAlert = () => {
         this.setState((prevState) => ({
             showAlert: false,
@@ -75,7 +90,10 @@ class App extends Component {
                             id,
                         },
                     ],
-                    lastUpdate: Date.now(),
+                    settings: {
+                        ...prevState.settings,
+                        lastUpdate: Date.now(),
+                    },
                 };
             });
         });
@@ -88,7 +106,13 @@ class App extends Component {
                     if (product.id === editProduct.id) product = editProduct;
                     return product;
                 });
-                return { products, lastUpdate: Date.now() };
+                return {
+                    products,
+                    settings: {
+                        ...prevState.settings,
+                        lastUpdate: Date.now(),
+                    },
+                };
             });
             editSettingRequest('lastUpdate', new Date());
         });
@@ -96,10 +120,13 @@ class App extends Component {
 
     removeItem = () => {
         deleteProductRequest(this.state.productIdToRemove, () => {
-            this.setState(({ products, productIdToRemove }) => {
+            this.setState(({ products, productIdToRemove, settings }) => {
                 return {
                     products: products.filter(({ id }) => id !== productIdToRemove),
-                    lastUpdate: Date.now(),
+                    settings: {
+                        ...settings,
+                        lastUpdate: Date.now(),
+                    },
                 };
             });
             this.toggleModal();
@@ -115,37 +142,41 @@ class App extends Component {
             toggleModal: this.toggleModal,
             hideAlert: this.hideAlert,
             updateAlert: this.updateAlert,
+            updateSettings: this.updateSettings,
         };
-        const productToRemove = this.state.products.find((product) => {
-            return product.id === this.state.productIdToRemove;
+        const { isLoaded, products, productIdToRemove } = this.state;
+        const productToRemove = products.find(({ id }) => {
+            return id === productIdToRemove;
         });
         return (
             <BrowserRouter>
                 <AppContext.Provider value={contextElements}>
-                    <StyledWrapper>
-                        <div className="container mx-auto px-4 sm:px-8">
-                            <div className="py-8">
-                                <Switch>
-                                    <Route exact path="/" component={RootView} />
-                                    <Route path="/shoplist" component={ShopListView} />
-                                    <Route path="/add" component={NewProductView} />
-                                    <Route path="/edit/:id" component={EditProductView} />
-                                    <Route path="/setting" component={SettingView} />
-                                    <Route path="*" component={RootView} />
-                                </Switch>
+                    {isLoaded && (
+                        <StyledWrapper>
+                            <div className="container mx-auto px-4 sm:px-8">
+                                <div className="py-8">
+                                    <Switch>
+                                        <Route exact path="/" component={RootView} />
+                                        <Route path="/shoplist" component={ShopListView} />
+                                        <Route path="/add" component={NewProductView} />
+                                        <Route path="/edit/:id" component={EditProductView} />
+                                        <Route path="/setting" component={SettingView} />
+                                        <Route path="*" component={RootView} />
+                                    </Switch>
+                                </div>
                             </div>
-                        </div>
-                        <Modal showModal={this.state.showModal}>
-                            Potwierdź usunięcie {productToRemove?.productName} w kategorii{' '}
-                            {productToRemove?.productCategory}
-                            <div>
-                                <Button color="red" onClick={this.removeItem}>
-                                    Usuń
-                                </Button>
-                                <Button onClick={this.hideModal}>Anuluj</Button>
-                            </div>
-                        </Modal>
-                    </StyledWrapper>
+                            <Modal showModal={this.state.showModal}>
+                                Potwierdź usunięcie {productToRemove?.productName} w kategorii{' '}
+                                {productToRemove?.productCategory}
+                                <div>
+                                    <Button color="red" onClick={this.removeItem}>
+                                        Usuń
+                                    </Button>
+                                    <Button onClick={this.hideModal}>Anuluj</Button>
+                                </div>
+                            </Modal>
+                        </StyledWrapper>
+                    )}
                 </AppContext.Provider>
             </BrowserRouter>
         );

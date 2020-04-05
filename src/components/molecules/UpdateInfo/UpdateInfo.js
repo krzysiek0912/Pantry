@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 class UpdateInfo extends Component {
     state = {
         isUpdated: true,
-        timeToUpdate: 20000,
+        timeToUpdate: 0,
         lastUpdate: null,
     };
     getNextUpdate = () => {

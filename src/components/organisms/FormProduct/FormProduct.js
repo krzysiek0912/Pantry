@@ -174,27 +174,10 @@ class FormProduct extends Component {
                                 value={unit}
                                 className="border border-gray-300 rounded text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
                             >
-                                <option value="DEFAULT" disabled>
-                                    Wybierz kategorię ...
-                                </option>
-                                <option
-                                    selected={this.props.option === 'kg' ? ' selected' : ''}
-                                    value="kg"
-                                >
-                                    Produkty na wagę
-                                </option>
-                                <option
-                                    selected={this.props.option === 'szt' ? ' selected' : ''}
-                                    value="szt"
-                                >
-                                    Produkty na szt
-                                </option>
-                                <option
-                                    selected={this.props.option === 'l' ? ' selected' : ''}
-                                    value="l"
-                                >
-                                    Napoje
-                                </option>
+                                <option value="DEFAULT">Wybierz kategorię ...</option>
+                                <option value="kg">Produkty na wagę</option>
+                                <option value="szt">Produkty na szt</option>
+                                <option value="l">Napoje</option>
                             </select>
                         </StyledWrapper>
                     </div>

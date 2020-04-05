@@ -34,6 +34,16 @@ export const getOneProductRequest = (id, callback = () => {}) => {
             callback(product);
         });
 };
+export const getAllSettingRequest = (callback = () => {}) => {
+    settingsColection.get().then((querySnapshot) => {
+        const data = querySnapshot.docs.map((doc) => doc.data());
+        const settings = data.reduce(function (result, setting, index, array) {
+            result[setting.name] = setting.value;
+            return result;
+        }, {});
+        callback(settings);
+    });
+};
 export const getOneSettingRequest = (settingName, callback = () => {}) => {
     settingsColection
         .where('name', '==', settingName)

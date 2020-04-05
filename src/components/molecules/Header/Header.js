@@ -30,12 +30,14 @@ const Header = ({ match }) => {
             )}
             <AppContext.Consumer>
                 {(context) => {
-                    const { lastUpdate, timeToUpdate, showAlert, hideAlert } = context;
+                    const { settings, showAlert, hideAlert } = context;
+                    const lastUpdate = settings.lastUpdate;
+                    console.log('lastUpdate', lastUpdate);
                     return lastUpdate && showAlert ? (
                         <UpdateInfo
                             lastUpdate={lastUpdate}
                             hideAlert={hideAlert}
-                            timeToUpdate={timeToUpdate}
+                            timeToUpdate={settings.timeToUpdate}
                         />
                     ) : null;
                 }}
