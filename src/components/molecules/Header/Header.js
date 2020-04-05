@@ -1,7 +1,9 @@
 import React from 'react';
 import { withRouter } from 'react-router';
+import AppContext from '../../../context';
 import { Link } from 'react-router-dom';
 import Button from '../../atoms/Button/Button';
+import UpdateInfo from '../UpdateInfo/UpdateInfo';
 
 const Header = ({ match }) => {
     return (
@@ -26,6 +28,18 @@ const Header = ({ match }) => {
                     <Button color="orange">Ustawienia</Button>
                 </Link>
             )}
+            <AppContext.Consumer>
+                {(context) => {
+                    const { lastUpdate, timeToUpdate, showAlert, hideAlert } = context;
+                    return lastUpdate && showAlert ? (
+                        <UpdateInfo
+                            lastUpdate={lastUpdate}
+                            hideAlert={hideAlert}
+                            timeToUpdate={timeToUpdate}
+                        />
+                    ) : null;
+                }}
+            </AppContext.Consumer>
         </>
     );
 };

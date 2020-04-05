@@ -13,6 +13,7 @@ firebase.initializeApp(config);
 
 const db = firebase.firestore();
 const productColection = db.collection('products');
+const settingsColection = db.collection('settings');
 
 export const getAllProducts = (order, callback) => {
     productColection
@@ -31,6 +32,16 @@ export const getOneProductRequest = (id, callback) => {
             const data = querySnapshot.docs.map((doc) => doc.data());
             const product = data[0];
             callback(product);
+        });
+};
+export const getOneSettingRequest = (settingName, callback) => {
+    settingsColection
+        .where('name', '==', settingName)
+        .get()
+        .then((querySnapshot) => {
+            const data = querySnapshot.docs.map((doc) => doc.data());
+            const settingValue = data[0].value;
+            callback(settingValue);
         });
 };
 
@@ -56,6 +67,19 @@ export const editProductRequest = (editProduct, callback) => {
         })
         .then(() => {
             callback();
+        });
+};
+export const editSettingRequest = (settingName, newValue, callback) => {
+    settingsColection
+        .where('name', '==', settingName)
+        .get()
+        .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                doc.ref.update({ value: newValue });
+            });
+        })
+        .then((res) => {
+            callback(res);
         });
 };
 

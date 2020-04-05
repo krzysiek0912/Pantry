@@ -9,6 +9,8 @@ import {
     addNewProductRequest,
     editProductRequest,
     deleteProductRequest,
+    getOneSettingRequest,
+    editSettingRequest,
 } from './firebase';
 import SingleProductView from './views/SingleIeProductView';
 import ShopListView from './views/ShopListView';
@@ -30,24 +32,36 @@ class App extends Component {
         showModal: false,
         productIdToRemove: null,
         order: 'productName',
-        lastEdit: null,
+        lastUpdate: null,
+        timeToUpdate: 10000,
+        isUpdated: true,
+        showAlert: true,
     };
 
     componentDidMount() {
         getAllProducts(this.state.order, (data) => {
             this.setState((prevState, props) => ({
                 products: data,
-                lastEdit: Date.now(),
             }));
+        });
+        getOneSettingRequest('lastUpdate', (vale) => {
+            this.setState({
+                lastUpdate: vale.toMillis(),
+            });
         });
     }
 
+    hideAlert = () => {
+        this.setState((prevState) => ({
+            showAlert: false,
+        }));
+    };
     toggleModal = (id) => {
         this.setState((prevState) => ({
             showModal: !prevState.showModal,
             productIdToRemove: id,
-            lastEdit: Date.now(),
         }));
+        editSettingRequest('lastUpdate', new Date());
     };
 
     addProduct = (newProduct) => {
@@ -61,7 +75,7 @@ class App extends Component {
                             id,
                         },
                     ],
-                    lastEdit: Date.now(),
+                    lastUpdate: Date.now(),
                 };
             });
         });
@@ -74,8 +88,9 @@ class App extends Component {
                     if (product.id === editProduct.id) product = editProduct;
                     return product;
                 });
-                return { products, lastEdit: Date.now() };
+                return { products, lastUpdate: Date.now() };
             });
+            editSettingRequest('lastUpdate', new Date());
         });
     };
 
@@ -84,6 +99,7 @@ class App extends Component {
             this.setState(({ products, productIdToRemove }) => {
                 return {
                     products: products.filter(({ id }) => id !== productIdToRemove),
+                    lastUpdate: Date.now(),
                 };
             });
             this.toggleModal();
@@ -97,6 +113,8 @@ class App extends Component {
             removeItem: this.removeItem,
             editProduct: this.editProduct,
             toggleModal: this.toggleModal,
+            hideAlert: this.hideAlert,
+            updateAlert: this.updateAlert,
         };
         const productToRemove = this.state.products.find((product) => {
             return product.id === this.state.productIdToRemove;
