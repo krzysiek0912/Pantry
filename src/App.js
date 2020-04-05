@@ -31,7 +31,6 @@ class App extends Component {
     state = {
         products: [],
         showModal: false,
-        productIdToRemove: null,
         order: 'productName',
         lastUpdate: null,
         timeToUpdate: 10000,
