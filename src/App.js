@@ -12,7 +12,8 @@ import {
     getOneSettingRequest,
     editSettingRequest,
 } from './firebase';
-import SingleProductView from './views/SingleIeProductView';
+import EditProductView from './views/EditProductView';
+import NewProductView from './views/NewProductView';
 import ShopListView from './views/ShopListView';
 import SettingView from './views/SettingView';
 import Modal from './components/molecules/Modal/Modal';
@@ -128,8 +129,8 @@ class App extends Component {
                                 <Switch>
                                     <Route exact path="/" component={RootView} />
                                     <Route path="/shoplist" component={ShopListView} />
-                                    <Route path="/add" component={SingleProductView} />
-                                    <Route path="/edit/:id" component={SingleProductView} />
+                                    <Route path="/add" component={NewProductView} />
+                                    <Route path="/edit/:id" component={EditProductView} />
                                     <Route path="/setting" component={SettingView} />
                                     <Route path="*" component={RootView} />
                                 </Switch>

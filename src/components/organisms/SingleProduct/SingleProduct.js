@@ -7,12 +7,14 @@ class SingleProduct extends Component {
         return (
             <AppContext.Consumer>
                 {(context) => {
-                    const idParams = this.props.match.params.id;
+                    const { match, isNewItem } = this.props;
+                    const idParams = match.params.id;
                     const productToEdit = context.products.find(({ id }) => idParams === id);
 
                     return (
                         <>
                             <FormProduct
+                                isNewItem={isNewItem}
                                 product={productToEdit}
                                 addProduct={context.addProduct}
                                 editProduct={context.editProduct}

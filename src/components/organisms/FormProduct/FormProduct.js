@@ -56,7 +56,6 @@ class FormProduct extends Component {
     };
     handleSubmit = (e) => {
         e.preventDefault();
-        console.log('state', this.state.product);
         const { count, minCount, id, productName } = this.state.product;
         if (productName === '') {
             this.setState({
